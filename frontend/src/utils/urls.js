@@ -7,8 +7,9 @@ export const AUTH_URLS = {
 };
 
 export const DONATION_URLS = {
-    POST: `${BASE_URL}/donations/post`,
-    GET_ALL: `${BASE_URL}/donations/all`,
+    POST: `${BASE_URL}/donations/`,
+    GET_ALL: `${BASE_URL}/donations/feed`,
+    GET_MY_POSTS: `${BASE_URL}/donations/my-posts`,
     GET_BY_ID: (id) => `${BASE_URL}/donations/${id}`,
 };
 

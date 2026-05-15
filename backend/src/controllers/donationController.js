@@ -1,4 +1,5 @@
 import Donation from "../models/donation.model.js";
+import Assignment from "../models/assignment.model.js";
 
 // @desc    Create a new donation
 // @route   POST /api/donations
@@ -77,6 +78,7 @@ export const getDonationFeed = async (req, res) => {
 export const claimDonation = async (req, res) => {
   try {
     const donation = await Donation.findById(req.params.id);
+    const { distanceValue, durationValue, distanceText, durationText, urgency: reqUrgency } = req.body;
 
     if (!donation) {
       return res.status(404).json({ message: "Donation not found" });
@@ -88,6 +90,35 @@ export const claimDonation = async (req, res) => {
 
     donation.status = "Assigned";
     await donation.save();
+
+    console.log("Donation marked as Assigned. Creating Assignment entry...");
+
+    // Fallback urgency calculation if not provided by frontend
+    let urgency = reqUrgency || "Medium";
+    if (!reqUrgency && donation.useByTime && durationValue) {
+      const timeLeft = (new Date(donation.useByTime).getTime() - Date.now()) / 1000;
+      const buffer = timeLeft - durationValue;
+      if (buffer < 1800) urgency = "High";
+      else if (buffer > 7200) urgency = "Low";
+    }
+
+    try {
+      // Create an assignment record
+      const newAssignment = await Assignment.create({
+        donationId: donation._id,
+        volunteerId: req.user.id,
+        distance: distanceText || distanceValue?.toString() || "0",
+        duration: durationText || durationValue?.toString() || "0",
+        urgency,
+        matchedAt: new Date()
+      });
+      console.log("Assignment created successfully:", newAssignment._id);
+    } catch (assignError) {
+      console.error("Error creating assignment record:", assignError);
+      // We don't necessarily want to fail the whole request if assignment creation fails,
+      // but in this case the user specifically wants it stored.
+      throw assignError;
+    }
 
     res.status(200).json({ message: "Donation claimed successfully", donation });
   } catch (error) {

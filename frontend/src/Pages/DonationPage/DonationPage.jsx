@@ -1,11 +1,14 @@
-import { Container, Title, TextInput, Textarea, Button, Paper, Stack, Select, NumberInput, Notification } from '@mantine/core';
+import { Container, Title, TextInput, Textarea, Button, Paper, Stack, Select, NumberInput, Notification, Text } from '@mantine/core';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getUserRole } from '../../redux/slices/User';
 import http from '../../utils/http';
 import { DONATION_URLS } from '../../utils/urls';
 
 function DonationPage() {
   const navigate = useNavigate();
+  const userRole = useSelector(getUserRole);
   const [formData, setFormData] = useState({
     foodItem: '',
     quantity: 1,
@@ -17,6 +20,22 @@ function DonationPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  if (userRole === 'Volunteer') {
+    return (
+      <Container size="sm" py="xl">
+        <Paper withBorder p="xl" radius="md" shadow="sm" align="center">
+          <Title order={2} mb="md" c="teal">Donor Access Only</Title>
+          <Text mb="lg">
+            As a Volunteer, you are here to pick up donations. If you want to post food, please register as a Donor.
+          </Text>
+          <Button color="teal" component="a" href="/feed">
+            View Available Donations
+          </Button>
+        </Paper>
+      </Container>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

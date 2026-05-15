@@ -21,8 +21,10 @@ import classes from './HeaderMegaMenu.module.css';
 
 const navLinks = [
   { to: '/', label: 'Home' },
-  { to: '/feed', label: 'Feed' },
-  { to: '/donate', label: 'Donate' },
+  { to: '/DonationForm', label: 'Post Donation' },
+  { to: '/donationhistory', label: 'My History' },
+  { to: '/feed', label: 'Available Donations' },
+  { to: '/admin', label: 'Admin Dashboard' },
   { to: '/profile', label: 'Profile' },
 ];
 
@@ -34,9 +36,29 @@ export default function HeaderMegaMenu() {
 
   const navItems = navLinks
     .filter((link) => {
-      if (link.to === '/feed') return userRole === 'Volunteer';
-      if (link.to === '/donate') return userRole === 'Donor';
-      if (link.to === '/profile') return isLoggedIn;
+      // Home and Profile are visible to everyone (Guest + Donor/Volunteer)
+      // Admins are restricted to Admin Dashboard only
+      if (userRole === 'Admin') {
+        if (link.to === '/admin' ||link.to==='/profile') return true;
+        return false;
+      }
+
+      if (link.to === '/' || link.to === '/login') {
+        return true;
+      }
+
+      // Logic for Donor role: Can post and see their own history
+      if (userRole === 'Donor') {
+        if (link.to === '/DonationForm' || link.to === '/donationhistory'||link.to=='/profile') return true;
+        return false;
+      }
+      
+      // Logic for Volunteer role: Can see Available Donations
+      if (userRole === 'Volunteer') {
+        if (link.to === '/feed'||link.to=='/profile') return true;
+        return false;
+      }
+
       return true;
     })
     .map((link) => (
@@ -57,7 +79,7 @@ export default function HeaderMegaMenu() {
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
           <Text component={Link} to="/" className={classes.logo} style={{ fontSize: '24px', fontWeight: 900, textDecoration: 'none', color: 'black' }}>
-            Donor<Text component="span" c="teal">Platon</Text>
+            Nutri<Text component="span" c="teal">Loop</Text>
           </Text>
 
           <Group h="100%" gap={0} visibleFrom="sm">

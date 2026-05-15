@@ -13,14 +13,16 @@ export const ProfilePage = () => {
     );
   }
 
+  const userIdToShow = user.id || user._id;
+
   return (
     <Container size="sm" py="xl">
       <Paper withBorder p="xl" radius="md" shadow="sm">
         <Stack align="center" mb="lg">
           <Avatar size={100} radius={100} color="teal">
-            {user.name?.charAt(0).toUpperCase()}
+            {user.displayName?.charAt(0).toUpperCase() || user.username?.charAt(0).toUpperCase() || user.name?.charAt(0).toUpperCase()}
           </Avatar>
-          <Title order={2}>{user.name}</Title>
+          <Title order={2} c="dark">{user.displayName || user.username || user.name || 'Member'}</Title>
           <Badge size="lg" color="teal" variant="filled">
             {user.role?.toUpperCase()}
           </Badge>
@@ -37,6 +39,11 @@ export const ProfilePage = () => {
           <Group justify="space-between">
             <Text fw={500}>Phone Number</Text>
             <Text>{user.phone || 'Not provided'}</Text>
+          </Group>
+
+          <Group justify="space-between">
+            <Text fw={500}>My Address (for Distance)</Text>
+            <Text size="sm" c="teal" fw={600}>{user.address || 'Update profile to add address'}</Text>
           </Group>
 
           <Group justify="space-between">

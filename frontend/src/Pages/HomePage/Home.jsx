@@ -1,9 +1,13 @@
 import {
   Button,
-  Center,
   Container,
   Text,
   Title,
+  Box,
+  Stack,
+  Group,
+  Badge,
+  Paper,
 } from "@mantine/core";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -26,69 +30,89 @@ export const Home = () => {
   };
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100%",
-        background: "linear-gradient(135deg, #d9afd9 0%, #97d9e1 100%)",
-        position: "relative",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-      }}
-    >
-      <Container size="sm" style={{ position: "relative", zIndex: 1 }}>
-        <div
-          style={{
-            backdropFilter: "blur(20px)",
-            background: "rgba(255, 255, 255, 0.1)",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            borderRadius: "30px",
-            padding: "3rem 2rem",
-            boxShadow: "0 8px 40px rgba(0, 0, 0, 0.2)",
-            textAlign: "center",
-          }}
-        >
-          <Center>
-            <IconLink size={48} color="#ffffff" />
-          </Center>
-
-          <Title
-            order={1}
-            style={{
-              color: "white",
-              fontWeight: 700,
-              fontSize: "2.8rem",
-              marginTop: "1rem",
-            }}
-          >
-            Food Donation Matching Platform
-          </Title>
-
-          <Text
-            size="xl"
-fw={700}
-            style={{
-              color: "#f1f1f1",
-              marginTop: "0.8rem",
-              marginBottom: "2rem",
-              fontWeight: 400,
-            }}
-          >
+    <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
+      {/* Hero Section */}
+      <Box 
+        style={{ 
+          paddingBottom: '100px',
+          paddingTop: '100px',
+          background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+          borderBottom: '1px solid #dee2e6'
+        }}
+      >
+        <Container size="lg">
+          <Stack align="center" spacing="xl" textAlign="center">
+            <Badge size="lg" variant="filled" color="teal" radius="sm">
+              COMMUNITY DRIVEN
+            </Badge>
             
-          </Text>
+            <Title 
+              style={{ 
+                fontSize: '3.5rem', 
+                fontWeight: 900, 
+                color: '#1a1b1e',
+                lineHeight: 1.1,
+                maxWidth: '800px',
+                textAlign: 'center'
+              }}
+            >
+              Building a World with <Text span inherit c="teal">NutriLoop</Text>
+            </Title>
+            
+            <Text 
+              size="xl" 
+              color="dimmed" 
+              style={{ maxWidth: '600px', fontSize: '1.25rem' }}
+            >
+              Connect surplus food with those who need it most. Join our platform to donate, volunteer, or support the movement toward a more sustainable future.
+            </Text>
 
-          <Button
-            size="md"
-            radius="xl"
-            variant="gradient"
-            gradient={{ from: "grape", to: "indigo" }}
-            onClick={handleGetStarted}
-          >
-            Get Started
-          </Button>
-        </div>
+            <Group spacing="md">
+              <Button 
+                size="xl" 
+                color="teal" 
+                radius="md"
+                onClick={handleGetStarted}
+              >
+                Get Started Now
+              </Button>
+              <Button 
+                size="xl" 
+                variant="outline" 
+                color="teal" 
+                radius="md"
+                component="a"
+                href="#how-it-works"
+              >
+                How it Works
+              </Button>
+            </Group>
+          </Stack>
+        </Container>
+      </Box>
+
+      {/* Features/Stats Section */}
+      <Container size="lg" py={80} id="how-it-works">
+        <Stack spacing={50}>
+          <Title align="center" order={2} style={{ fontSize: '2.5rem', color: '#1a1b1e' }}>
+            Why Choose NutriLoop?
+          </Title>
+          
+          <Group grow spacing={40}>
+            <Paper p="xl" radius="md" withBorder style={{ textAlign: 'center' }}>
+              <Title order={3} mb="sm" c="teal">Reduce Waste</Title>
+              <Text color="dimmed">Help divert perfectly good food from landfills and reduce methane emissions.</Text>
+            </Paper>
+            <Paper p="xl" radius="md" withBorder style={{ textAlign: 'center' }}>
+              <Title order={3} mb="sm" c="teal">Feed Many</Title>
+              <Text color="dimmed">Your surplus can provide nutritious meals to local shelters and families in need.</Text>
+            </Paper>
+            <Paper p="xl" radius="md" withBorder style={{ textAlign: 'center' }}>
+              <Title order={3} mb="sm" c="teal">Easy Logistics</Title>
+              <Text color="dimmed">Our platform connects you with verified volunteers for quick and easy pickups.</Text>
+            </Paper>
+          </Group>
+        </Stack>
       </Container>
     </div>
   );

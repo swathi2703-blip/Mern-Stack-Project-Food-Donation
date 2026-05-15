@@ -20,6 +20,10 @@ const assignmentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  duration: {
+    type: Number,
+    required: false,
+  },
   matchedAt: {
     type: Date,
     default: Date.now,
