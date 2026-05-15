@@ -2,18 +2,28 @@ import {
   Button,
   Center,
   Container,
-  Stack,
   Text,
   Title,
 } from "@mantine/core";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getIsLoggedIn } from "../../redux/slices/User";
+import { getIsLoggedIn, getUserRole } from "../../redux/slices/User";
 import { IconLink } from "@tabler/icons-react";
 
-const Home = () => {
+export const Home = () => {
   const isLoggedIn = useSelector(getIsLoggedIn);
+  const userRole = useSelector(getUserRole);
   const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    } else if (userRole === 'Volunteer') {
+      navigate('/feed');
+    } else {
+      navigate('/donate');
+    }
+  };
 
   return (
     <div
@@ -74,9 +84,7 @@ fw={700}
             radius="xl"
             variant="gradient"
             gradient={{ from: "grape", to: "indigo" }}
-            onClick={() =>
-              isLoggedIn ? navigate("/url/shortner") : navigate("/login")
-            }
+            onClick={handleGetStarted}
           >
             Get Started
           </Button>

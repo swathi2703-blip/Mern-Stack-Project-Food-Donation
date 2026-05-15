@@ -1,13 +1,33 @@
 {
   "name": "backend",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@mantine/core": "^9.2.1",
+    "@mantine/hooks": "^9.2.1",
+    "axios": "^1.16.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.19.2",
+    "google-auth-library": "^10.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^1.16.0",
+    "mongoose": "^8.15.1",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.1.5",
+    "nodemon": "^3.1.10",
+    "react-router-dom": "^7.15.1"
+  }
 }
