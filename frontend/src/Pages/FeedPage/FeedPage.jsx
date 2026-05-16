@@ -369,7 +369,7 @@ function FeedPage() {
               loading={calculating}
               size="md"
             >
-              Start AI Matching
+              Start  Matching
             </Button>
             {distanceError && (
               <Text size="xs" c="red">
@@ -472,7 +472,7 @@ function FeedPage() {
 
                 <Stack gap={5} mb="md">
                   <Title order={4} c="dark">
-                    {isBestMatch ? 'Best Volunteer Match (AI Calculated)' : 'Pending request'}
+                    {isBestMatch ? 'Best Volunteer Match ' : 'Pending request'}
                   </Title>
                   <Text size="sm" fw={700} c="blue">
                     Estimated Travel Time: {donation.durationText || 'Enter location above'}
