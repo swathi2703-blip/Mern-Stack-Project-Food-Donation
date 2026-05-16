@@ -57,7 +57,7 @@ export const Home = () => {
         <Container size="lg">
           <Stack align="center" spacing="xl" textAlign="center">
             <Badge size="lg" variant="filled" color="teal" radius="sm">
-              COMMUNITY DRIVEN
+              ZERO FOOD WASTE
             </Badge>
             
             <Title 
