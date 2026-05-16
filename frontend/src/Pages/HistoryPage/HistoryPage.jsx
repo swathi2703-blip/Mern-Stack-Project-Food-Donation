@@ -94,14 +94,6 @@ function HistoryPage() {
                       <Text fw={500} size="sm">Urgency:</Text>
                       <Text size="sm">{assignment.urgency || 'Medium'}</Text>
                     </Group>
-                    <Group gap={5}>
-                      <Text fw={500} size="sm">Distance:</Text>
-                      <Text size="sm">{Number.isFinite(assignment.distance) ? assignment.distance : 'N/A'}</Text>
-                    </Group>
-                    <Group gap={5}>
-                      <Text fw={500} size="sm">Duration:</Text>
-                      <Text size="sm">{Number.isFinite(assignment.duration) ? assignment.duration : 'N/A'}</Text>
-                    </Group>
                   </Stack>
                 </Card>
               );
