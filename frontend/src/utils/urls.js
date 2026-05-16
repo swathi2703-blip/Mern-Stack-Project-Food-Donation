@@ -1,4 +1,4 @@
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || `${window.location.origin}/api`;
 
 export const AUTH_URLS = {
     LOGIN: `${BASE_URL}/auth/login`,

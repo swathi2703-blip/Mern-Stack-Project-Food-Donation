@@ -7,4 +7,5 @@ export const config = {
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   JWT_SECRET: process.env.JWT_SECRET,
+  CORS_ORIGINS: process.env.CORS_ORIGINS || "",
 };

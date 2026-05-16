@@ -18,11 +18,23 @@ const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Middlewares
+const defaultOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://mern-stack-project-food-donation.onrender.com'
+];
+
+const envOrigins = config.CORS_ORIGINS
+  ? config.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : [];
+
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
 app.use(cors({
- origin: ['http://localhost:5173', 'http://127.0.0.1:5173'], 
- credentials: true, 
- methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
- allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'], 
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],
 }));
 
 app.use(morgan("dev")); 
