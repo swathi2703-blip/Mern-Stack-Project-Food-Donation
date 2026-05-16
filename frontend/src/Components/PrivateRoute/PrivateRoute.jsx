@@ -9,7 +9,7 @@ const PrivateRoute = () => {
 
     if(!token) {
         dispatch(removeUser())
-        return <Navigate to={'/login'}/>
+        return <Navigate to={'/'} />
     }
     return <Outlet/>
 }

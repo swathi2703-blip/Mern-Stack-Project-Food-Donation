@@ -10,7 +10,7 @@ import {
   Paper,
 } from "@mantine/core";
 import { useSelector, useDispatch } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getIsLoggedIn, getUserRole, updateUserRole } from "../../redux/slices/User";
 import { useState } from "react";
 import http from "../../utils/http";
@@ -22,10 +22,6 @@ export const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [savingRole, setSavingRole] = useState(false);
-
-  if (!isLoggedIn) {
-    return <Navigate to="/login" />;
-  }
 
   const handleRoleSelect = async (role) => {
     try {
@@ -85,7 +81,7 @@ export const Home = () => {
               Connect surplus food with those who need it most. Join our platform to donate, volunteer, or support the movement toward a more sustainable future.
             </Text>
 
-            {userRole === 'Admin' ? (
+            {!isLoggedIn ? null : userRole === 'Admin' ? (
               <Group spacing="md">
                 <Button
                   size="xl"
