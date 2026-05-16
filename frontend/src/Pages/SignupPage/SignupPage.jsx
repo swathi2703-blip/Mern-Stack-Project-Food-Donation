@@ -1,4 +1,4 @@
-import { Paper, TextInput, PasswordInput, Button, Title, Text, Anchor, Stack, Group, Center, Select, Notification } from '@mantine/core';
+import { Paper, TextInput, PasswordInput, Button, Title, Text, Anchor, Stack, Center, Notification } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import http from '../../utils/http';
@@ -11,7 +11,6 @@ function SignupPage() {
     email: '',
     password: '',
     phone: '',
-    role: 'Donor', // default role matching enum
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -75,18 +74,6 @@ function SignupPage() {
             required
             value={formData.password}
             onChange={(e) => setFormData({...formData, password: e.target.value})}
-          />
-          <Select
-            label="I want to..."
-            placeholder="Pick a role"
-            data={[
-              { value: 'Donor', label: 'Donate Food (Donor)' },
-              { value: 'Volunteer', label: 'Help Out (Volunteer)' },
-            ]}
-            value={formData.role}
-            onChange={(val) => setFormData({...formData, role: val})}
-            size="md"
-            required
           />
           <Button 
             fullWidth 

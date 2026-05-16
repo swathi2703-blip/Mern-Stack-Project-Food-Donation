@@ -37,6 +37,39 @@ export const getMyDonations = async (req, res) => {
   }
 };
 
+// @desc    Get volunteer assignment history
+// @route   GET /api/donations/volunteer-history
+// @access  Private (Volunteer)
+export const getVolunteerHistory = async (req, res) => {
+  try {
+    if (req.user.role !== "Volunteer") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const assignments = await Assignment.find({ volunteerId: req.user.id })
+      .populate({
+        path: "donationId",
+        populate: { path: "donorId", select: "name" }
+      })
+      .sort("-matchedAt");
+
+    const history = assignments
+      .filter((assignment) => assignment.donationId)
+      .map((assignment) => ({
+        assignmentId: assignment._id,
+        donation: assignment.donationId,
+        urgency: assignment.urgency,
+        distance: assignment.distance,
+        duration: assignment.duration,
+        matchedAt: assignment.matchedAt,
+      }));
+
+    res.status(200).json(history);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Delete a donation
 // @route   DELETE /api/donations/:id
 // @access  Private (Donor/Admin)
@@ -67,6 +100,36 @@ export const getDonationFeed = async (req, res) => {
   try {
     const donations = await Donation.find({ status: "Pending" }).sort("-postedAt");
     res.status(200).json(donations);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get assigned donations for logged-in volunteer
+// @route   GET /api/donations/assigned
+// @access  Private (Volunteer)
+export const getAssignedDonations = async (req, res) => {
+  try {
+    if (req.user.role !== "Volunteer") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const assignments = await Assignment.find({ volunteerId: req.user.id })
+      .populate("donationId")
+      .sort("-matchedAt");
+
+    const assigned = assignments
+      .filter((assignment) => assignment.donationId && assignment.donationId.status === "Assigned")
+      .map((assignment) => ({
+        ...assignment.donationId.toObject(),
+        assignmentId: assignment._id,
+        urgency: assignment.urgency,
+        distance: assignment.distance,
+        duration: assignment.duration,
+        matchedAt: assignment.matchedAt,
+      }));
+
+    res.status(200).json(assigned);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -103,12 +166,15 @@ export const claimDonation = async (req, res) => {
     }
 
     try {
+      const numericDistance = Number(distanceValue);
+      const numericDuration = Number(durationValue);
+
       // Create an assignment record
       const newAssignment = await Assignment.create({
         donationId: donation._id,
         volunteerId: req.user.id,
-        distance: distanceText || distanceValue?.toString() || "0",
-        duration: durationText || durationValue?.toString() || "0",
+        distance: Number.isFinite(numericDistance) ? numericDistance : 0,
+        duration: Number.isFinite(numericDuration) ? numericDuration : 0,
         urgency,
         matchedAt: new Date()
       });
@@ -121,6 +187,42 @@ export const claimDonation = async (req, res) => {
     }
 
     res.status(200).json({ message: "Donation claimed successfully", donation });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Mark donation as fulfilled by the assigned volunteer
+// @route   PATCH /api/donations/fulfill/:id
+// @access  Private (Volunteer)
+export const fulfillDonation = async (req, res) => {
+  try {
+    if (req.user.role !== "Volunteer") {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    const donation = await Donation.findById(req.params.id);
+    if (!donation) {
+      return res.status(404).json({ message: "Donation not found" });
+    }
+
+    if (donation.status !== "Assigned") {
+      return res.status(400).json({ message: "Donation is not assigned" });
+    }
+
+    const assignment = await Assignment.findOne({
+      donationId: donation._id,
+      volunteerId: req.user.id,
+    });
+
+    if (!assignment) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    donation.status = "Fulfilled";
+    await donation.save();
+
+    res.status(200).json({ message: "Pickup completed successfully", donation });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

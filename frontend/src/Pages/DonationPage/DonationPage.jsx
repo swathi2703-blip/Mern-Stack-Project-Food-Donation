@@ -49,7 +49,7 @@ function DonationPage() {
     try {
       await http.post(DONATION_URLS.POST, payload);
       setSuccess(true);
-      setTimeout(() => navigate('/feed'), 2000);
+      setTimeout(() => navigate('/history'), 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to post donation');
     } finally {

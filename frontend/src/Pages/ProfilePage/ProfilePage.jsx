@@ -1,9 +1,40 @@
-import { Container, Paper, Title, Text, Avatar, Stack, Group, Badge, Divider } from '@mantine/core';
+import { Container, Paper, Title, Text, Avatar, Stack, Group, Badge, Divider, Loader, Center, Notification } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getUserData } from '../../redux/slices/User';
+import http from '../../utils/http';
+import { USER_URLS } from '../../utils/urls';
 
 export const ProfilePage = () => {
-  const user = useSelector(getUserData);
+  const cachedUser = useSelector(getUserData);
+  const [user, setUser] = useState(cachedUser);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setError('');
+        const response = await http.get(USER_URLS.PROFILE);
+        setUser(response.data?.user || cachedUser);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to load profile');
+        setUser(cachedUser);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [cachedUser]);
+
+  if (loading) {
+    return (
+      <Center h="50vh">
+        <Loader color="teal" size="xl" />
+      </Center>
+    );
+  }
 
   if (!user) {
     return (
@@ -13,11 +44,14 @@ export const ProfilePage = () => {
     );
   }
 
-  const userIdToShow = user.id || user._id;
-
   return (
     <Container size="sm" py="xl">
       <Paper withBorder p="xl" radius="md" shadow="sm">
+        {error && (
+          <Notification color="red" mb="md" onClose={() => setError('')}>
+            {error}
+          </Notification>
+        )}
         <Stack align="center" mb="lg">
           <Avatar size={100} radius={100} color="teal">
             {user.displayName?.charAt(0).toUpperCase() || user.username?.charAt(0).toUpperCase() || user.name?.charAt(0).toUpperCase()}
@@ -39,16 +73,6 @@ export const ProfilePage = () => {
           <Group justify="space-between">
             <Text fw={500}>Phone Number</Text>
             <Text>{user.phone || 'Not provided'}</Text>
-          </Group>
-
-          <Group justify="space-between">
-            <Text fw={500}>My Address (for Distance)</Text>
-            <Text size="sm" c="teal" fw={600}>{user.address || 'Update profile to add address'}</Text>
-          </Group>
-
-          <Group justify="space-between">
-            <Text fw={500}>Account Type</Text>
-            <Text>{user.role === 'Donor' ? 'Food Donor' : 'Volunteer / Driver'}</Text>
           </Group>
           
           <Group justify="space-between">

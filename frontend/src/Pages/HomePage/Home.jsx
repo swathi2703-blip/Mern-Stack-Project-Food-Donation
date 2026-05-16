@@ -9,23 +9,41 @@ import {
   Badge,
   Paper,
 } from "@mantine/core";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { getIsLoggedIn, getUserRole } from "../../redux/slices/User";
-import { IconLink } from "@tabler/icons-react";
+import { useSelector, useDispatch } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { getIsLoggedIn, getUserRole, updateUserRole } from "../../redux/slices/User";
+import { useState } from "react";
+import http from "../../utils/http";
+import { USER_URLS } from "../../utils/urls";
 
 export const Home = () => {
   const isLoggedIn = useSelector(getIsLoggedIn);
   const userRole = useSelector(getUserRole);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [savingRole, setSavingRole] = useState(false);
 
-  const handleGetStarted = () => {
-    if (!isLoggedIn) {
-      navigate('/login');
-    } else if (userRole === 'Volunteer') {
-      navigate('/feed');
-    } else {
-      navigate('/donate');
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
+
+  const handleRoleSelect = async (role) => {
+    try {
+      if (userRole === 'Admin') {
+        return;
+      }
+      setSavingRole(true);
+      await http.patch(USER_URLS.SET_ROLE, { role });
+      dispatch(updateUserRole(role));
+      if (role === 'Volunteer') {
+        navigate('/feed');
+      } else {
+        navigate('/donate');
+      }
+    } catch (error) {
+      console.error('Failed to set role', error);
+    } finally {
+      setSavingRole(false);
     }
   };
 
@@ -67,26 +85,40 @@ export const Home = () => {
               Connect surplus food with those who need it most. Join our platform to donate, volunteer, or support the movement toward a more sustainable future.
             </Text>
 
-            <Group spacing="md">
-              <Button 
-                size="xl" 
-                color="teal" 
-                radius="md"
-                onClick={handleGetStarted}
-              >
-                Get Started Now
-              </Button>
-              <Button 
-                size="xl" 
-                variant="outline" 
-                color="teal" 
-                radius="md"
-                component="a"
-                href="#how-it-works"
-              >
-                How it Works
-              </Button>
-            </Group>
+            {userRole === 'Admin' ? (
+              <Group spacing="md">
+                <Button
+                  size="xl"
+                  color="teal"
+                  radius="md"
+                  onClick={() => navigate('/admin')}
+                >
+                  Continue as Admin
+                </Button>
+              </Group>
+            ) : (
+              <Group spacing="md">
+                <Button
+                  size="xl"
+                  color="teal"
+                  radius="md"
+                  loading={savingRole}
+                  onClick={() => handleRoleSelect('Volunteer')}
+                >
+                  Continue as Volunteer
+                </Button>
+                <Button
+                  size="xl"
+                  variant="outline"
+                  color="teal"
+                  radius="md"
+                  loading={savingRole}
+                  onClick={() => handleRoleSelect('Donor')}
+                >
+                  Continue as Donor
+                </Button>
+              </Group>
+            )}
           </Stack>
         </Container>
       </Box>

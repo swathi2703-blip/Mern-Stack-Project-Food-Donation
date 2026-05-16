@@ -21,8 +21,8 @@ import classes from './HeaderMegaMenu.module.css';
 
 const navLinks = [
   { to: '/', label: 'Home' },
-  { to: '/DonationForm', label: 'Post Donation' },
-  { to: '/donationhistory', label: 'My History' },
+  { to: '/donate', label: 'Post Donation' },
+  { to: '/history', label: 'My History' },
   { to: '/feed', label: 'Available Donations' },
   { to: '/admin', label: 'Admin Dashboard' },
   { to: '/profile', label: 'Profile' },
@@ -36,6 +36,10 @@ export default function HeaderMegaMenu() {
 
   const navItems = navLinks
     .filter((link) => {
+      if (!isLoggedIn) {
+        return link.to === '/login';
+      }
+
       // Home and Profile are visible to everyone (Guest + Donor/Volunteer)
       // Admins are restricted to Admin Dashboard only
       if (userRole === 'Admin') {
@@ -49,13 +53,13 @@ export default function HeaderMegaMenu() {
 
       // Logic for Donor role: Can post and see their own history
       if (userRole === 'Donor') {
-        if (link.to === '/DonationForm' || link.to === '/donationhistory'||link.to=='/profile') return true;
+        if (link.to === '/donate' || link.to === '/history' || link.to === '/profile') return true;
         return false;
       }
       
       // Logic for Volunteer role: Can see Available Donations
       if (userRole === 'Volunteer') {
-        if (link.to === '/feed'||link.to=='/profile') return true;
+        if (link.to === '/feed' || link.to === '/history' || link.to === '/profile') return true;
         return false;
       }
 
