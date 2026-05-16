@@ -39,10 +39,10 @@ function LoginPage() {
         {/* Header Section */}
         <Stack align="center" gap={5} mb="xl">
           <Group gap={5}>
-            <Text fw={500}>Food Donation</Text>
+            <Text fw={500}>NutriLoop</Text>
             <Badge color="teal" variant="filled" size="sm">Auth</Badge>
           </Group>
-          <Title order={1} size="h2">Welcome back</Title>
+          <Title order={1} size="h2" c="black">Welcome back</Title>
         </Stack>
 
         {error && (
@@ -67,6 +67,11 @@ function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <Text size="sm" align="right">
+            <Anchor component="button" size="sm" onClick={() => navigate('/forgot-password')}>
+              Forgot password?
+            </Anchor>
+          </Text>
           <Button 
             fullWidth 
             size="lg" 

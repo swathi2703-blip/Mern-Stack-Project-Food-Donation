@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/HomePage/Home';
 import LoginPage from './Pages/Login/LoginPage';
 import SignupPage from './Pages/SignupPage/SignupPage';
+import ForgotPassword from './Pages/ForgotPassword/ForgotPassword';
 import DonationPage from './Pages/DonationPage/DonationPage';
 import FeedPage from './Pages/FeedPage/FeedPage';
 import { ProfilePage } from './Pages/ProfilePage/ProfilePage';
@@ -20,6 +21,7 @@ function App() {
             <Route path='/' element={<Home/>}/>
             <Route path='/login' element={<LoginPage/>}/>
             <Route path='/signup' element={<SignupPage/>}/>
+            <Route path='/forgot-password' element={<ForgotPassword/>}/>
             
             <Route element={<PrivateRoute/>}>
               <Route path='/feed' element={<FeedPage/>}/>
