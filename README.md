@@ -130,25 +130,6 @@ cd ..\frontend
 npm install
 ```
 
-Create a `backend/.env` file:
-
-```env
-MONGODB_URI=your_mongodb_connection_string
-PORT=3000
-JWT_SECRET=use_a_long_random_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-CORS_ORIGINS=http://localhost:5173
-```
-
-Create a `frontend/.env` file:
-
-```env
-VITE_GOOGLE_CLIENT_ID=your_google_client_id
-VITE_API_BASE_URL=http://localhost:3000/api
-```
-
-Never commit either `.env` file or any real credentials.
 
 ## Run locally
 
