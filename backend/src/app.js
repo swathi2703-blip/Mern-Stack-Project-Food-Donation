@@ -46,17 +46,24 @@ app.use(cookieParser());
 connectDB();
 
 // API Routes for Food Matching
+app.get("/api/test", (req, res) => res.json({ message: "API is working" }));
+
 app.use("/api/auth", authRouter);       // Login/Signup
 app.use("/api/user", userRouter);       // User Profiles
 app.use("/api/donations", donationRouter); // Post & Get Surplus Food
 app.use("/api/admin", adminRouter);    // Admin Dashboard
 app.use("/api/ai", aiRouter);          // AI Smart Matching
 
+// 404 handler for API routes - catches anything starting with /api
+app.use("/api", (req, res) => {
+  res.status(404).json({ message: `API route not found: ${req.method} ${req.originalUrl}` });
+});
+
 // Serve Frontend Static Files
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-// SPA Catch-all
-app.get("/*", (req, res) => { 
+// SPA Catch-all - Should be last
+app.get("*", (req, res) => { 
   res.sendFile(path.join(__dirname, "../../frontend/dist/index.html")) 
 });
 

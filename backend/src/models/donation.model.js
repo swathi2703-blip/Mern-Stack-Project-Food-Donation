@@ -41,6 +41,8 @@ const donationSchema = new mongoose.Schema({
 });
 
 donationSchema.index({ address: "text" });
+// MongoDB deletes a donation automatically once its use-by time has passed.
+donationSchema.index({ useByTime: 1 }, { expireAfterSeconds: 0 });
 
 const Donation = mongoose.model("Donation", donationSchema);
 export default Donation;

@@ -1,16 +1,30 @@
 import { Container, Paper, Title, Text, TextInput, Button, Stack, Center, Notification } from '@mantine/core';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import http from '../../utils/http';
+import { AUTH_URLS } from '../../utils/urls';
 
 function ForgotPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (!email.trim()) return;
-    setSubmitted(true);
+    
+    setLoading(true);
+    setError('');
+    try {
+      await http.post(AUTH_URLS.FORGOT_PASSWORD, { email });
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,6 +41,12 @@ function ForgotPassword() {
           </Notification>
         )}
 
+        {error && (
+          <Notification color="red" mb="md" onClose={() => setError('')}>
+            {error}
+          </Notification>
+        )}
+
         <form onSubmit={handleSubmit}>
           <Stack gap="sm">
             <TextInput
@@ -37,7 +57,7 @@ function ForgotPassword() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Button fullWidth size="lg" mt="md" color="teal" type="submit">
+            <Button fullWidth size="lg" mt="md" color="teal" type="submit" loading={loading}>
               Send Reset Link
             </Button>
             <Button variant="subtle" onClick={() => navigate('/login')}>

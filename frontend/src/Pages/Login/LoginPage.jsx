@@ -1,10 +1,11 @@
-﻿import { Paper, TextInput, PasswordInput, Button, Title, Text, Anchor, Stack, Badge, Group, Center, Notification } from '@mantine/core';
+﻿import { Paper, TextInput, PasswordInput, Button, Title, Text, Anchor, Stack, Badge, Group, Center, Notification, Divider } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/slices/User';
 import http from '../../utils/http';
 import { AUTH_URLS } from '../../utils/urls';
+import { GoogleLogin } from '@react-oauth/google';
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -28,6 +29,31 @@ function LoginPage() {
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await http.post(AUTH_URLS.GOOGLE_LOGIN, {
+        token: credentialResponse.credential
+      });
+
+      dispatch(setUser({
+        token: response.data.token,
+        user: response.data.user
+      }));
+
+      navigate('/');
+    } catch (err) {
+      if (err.response?.status === 404) {
+        navigate('/signup');
+        return;
+      }
+      setError(err.response?.data?.message || 'Google Login failed');
     } finally {
       setLoading(false);
     }
@@ -82,6 +108,16 @@ function LoginPage() {
           >
             Sign In
           </Button>
+
+          <Divider label="Or continue with" labelPosition="center" my="lg" />
+
+          <Center>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google Login Failed')}
+              useOneTap
+            />
+          </Center>
 
           <Text size="sm" align="center" mt="md">
             Don't have an account?{' '}

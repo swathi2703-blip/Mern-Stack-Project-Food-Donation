@@ -7,6 +7,11 @@ import Assignment from "../models/assignment.model.js";
 export const createDonation = async (req, res) => {
   try {
     const { foodItem, quantity, location, description, donorContact, useByTime } = req.body;
+    const expiryTime = new Date(useByTime);
+
+    if (Number.isNaN(expiryTime.getTime()) || expiryTime <= new Date()) {
+      return res.status(400).json({ message: "Use-by time must be in the future" });
+    }
     
     const donation = await Donation.create({
       donorId: req.user.id,
@@ -15,7 +20,7 @@ export const createDonation = async (req, res) => {
       address: location,
       description,
       donorContact,
-      useByTime: useByTime ? new Date(useByTime) : undefined,
+      useByTime: expiryTime,
       status: "Pending"
     });
 
@@ -98,7 +103,10 @@ export const deleteDonation = async (req, res) => {
 // @access  Private (Volunteer)
 export const getDonationFeed = async (req, res) => {
   try {
-    const donations = await Donation.find({ status: "Pending" }).sort("-postedAt");
+    const donations = await Donation.find({
+      status: "Pending",
+      useByTime: { $gt: new Date() },
+    }).sort("-postedAt");
     res.status(200).json(donations);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -140,11 +148,14 @@ export const getAssignedDonations = async (req, res) => {
 // @access  Private (Volunteer)
 export const claimDonation = async (req, res) => {
   try {
-    const donation = await Donation.findById(req.params.id);
+    const donation = await Donation.findOne({
+      _id: req.params.id,
+      useByTime: { $gt: new Date() },
+    });
     const { distanceValue, durationValue, distanceText, durationText, urgency: reqUrgency } = req.body;
 
     if (!donation) {
-      return res.status(404).json({ message: "Donation not found" });
+      return res.status(404).json({ message: "Donation not found or has expired" });
     }
 
     if (donation.status !== "Pending") {
